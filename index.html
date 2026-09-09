@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storly – Multi-Vendor Grocery & Ecommerce Marketplace</title>
+    <meta name="description" content="Farm fresh groceries, delivered to your door." />
+    <!--
+      Content-Security-Policy: defense-in-depth against XSS. The single
+      biggest practical risk to the auth token (see src/lib/auth.ts) is an
+      injected/inline script reading it out of localStorage - script-src
+      'self' blocks that class of attack outright (no inline scripts, no
+      eval, nothing loaded from a third-party host). style-src allows
+      'unsafe-inline' because this app (Tailwind + inline `style` props)
+      relies on inline styles, which is a far lower-severity vector than
+      inline scripts. img/font/connect are left open on scheme rather than
+      exact host because this project's API/storage domain is an env var
+      set at build/deploy time - tighten these to your real API host once
+      you know it. Tuned for the production build; if `npm run dev`'s HMR
+      client complains, relax script-src for local development only.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http:; font-src 'self' data:; connect-src 'self' https: http: ws: wss:; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

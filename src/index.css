@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap");
+@import "tailwindcss";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/thumbs";
+@import "swiper/css/free-mode";
+@import "animate.css";
+@import "./styles/custom.css";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-tiktok-sans: "TikTok Sans", sans-serif;
+
+  --color-primary-main: #7c3aed;
+  --color-primary-main-dark: #5b21b6;
+  --color-primary-light: #a78bfa;
+  --color-primary-lighter: #ede9fe;
+  --color-success-light: #f5f3ff; 
+
+  --color-secondary-main: #3366ff;
+  --color-secondary-lighter: #84a9ff;
+
+  --color-success-light: #aaf27f;
+  --color-success-dark: #54d62c;
+  --color-success-dark-main: #229a16;
+
+  --color-info-main: #1890ff;
+  --color-info-dark: #0c53b7;
+  --color-info-light: #74caff;
+
+  --color-warning-dark: #ffc107;
+  --color-warning-dark-main: #b78103;
+  --color-warning-light: #ffe16a;
+  --color-warning-lighter: #fff7cd;
+
+  --color-error-light: #ff4842;
+  --color-error-lighter: #fcd1ca;
+  --color-error-dark: #cb0233;
+  --color-error-darker: #920140;
+
+  --color-gray-primary: #212529;
+  --color-gray-secondary: #495057;
+  --color-gray-tertiary: #919eab;
+
+  --color-section-bg-yellow: #ffeb69;
+  --color-section-bg-green: #9ee872;
+  --color-section-bg-pink: #ffd6ef;
+  --color-section-bg-blue: #a0e2e0;
+  --color-section-bg-pastel: #c0f2dc;
+
+  --color-action-active: #637381;
+
+  --text-32: 32px;
+
+  --shadow-regular: 0 8px 16px 0 rgba(145, 158, 171, 0.12);
+}
+
+@layer base {
+  body {
+    @apply font-sans text-gray-primary;
+  }
+}

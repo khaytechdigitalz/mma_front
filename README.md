@@ -1,6 +1,6 @@
-# Storly — Grocery & Multi‑Vendor Ecommerce (React + TypeScript)
+# Market My Art — Art & Culture Multi‑Vendor Ecommerce (React + TypeScript)
 
-This is a full conversion of the original **Storly** Tailwind/HTML/Alpine.js
+This is a full conversion of the original **Market My Art** Tailwind/HTML/Alpine.js
 template into a real, installable **Vite + React + TypeScript + Tailwind CSS v4**
 project.
 

@@ -213,7 +213,7 @@ export function TrackOrder() {
                         <p className="text-gray-tertiary text-xs font-medium uppercase tracking-wider">Assigned Courier</p>
                         <div className="mt-1 space-y-1 text-sm text-gray-secondary">
                           <p className="flex items-center gap-1.5 font-medium text-gray-primary">
-                            <User className="size-4 text-primary-main" /> {tracking.courier.name}
+                            <User className="size-4 text-primary-main" /> {tracking.courier?.name}
                           </p>
                           <p className="flex items-center gap-1.5">
                             <Phone className="size-3.5 text-gray-tertiary" /> 

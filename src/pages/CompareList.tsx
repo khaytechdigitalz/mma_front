@@ -42,7 +42,6 @@ export function CompareList() {
       ),
     ).then((results) => {
       if (!cancelled) {
-        setItems(results.filter((r): r is CompareEntry => r !== null));
         setLoading(false);
       }
     });

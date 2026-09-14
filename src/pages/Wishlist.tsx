@@ -33,7 +33,7 @@ export function Wishlist() {
       ),
     ).then((results) => {
       if (!cancelled) {
-        setItems(results.filter((p): p is ProductItem => p !== null));
+      //  setItems(results.filter((p): p is ProductItem => p !== null));
         setLoading(false);
       }
     });

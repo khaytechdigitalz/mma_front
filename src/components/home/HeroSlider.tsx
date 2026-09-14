@@ -8,33 +8,35 @@ import { Button } from "@/components/ui/Button";
 
 const slides = [
 
+
   {
-    eyebrow: "Winter Sale",
-    title: "Save Big On Pantry Essentials This Week",
-    subtitle: "Bundle deals and free delivery on orders over $50.",
-    cta: "View Deals",
-    image: "/images/slider/hero-slide-3.png",
-    bgimage: "/images/slider/contraception-method-composition-with-tiny-shopping-cart-copy-space.jpg",
-    href: "/products",
+    "eyebrow": "Exclusive Marketplace",
+    "title": "Shop Trendsetting Products From Independent Sellers",
+    "subtitle": "Explore unique art, fashion, and everyday essentials all in one place.",
+    "cta": "Shop Now",
+    "image": "/images/slider/hero-slide-3.png",
+    "bgimage": "/images/slider/Screenshot 2026-09-15 at 12.04.09 AM.png",
+    "href": "/products"
   },
   {
-    eyebrow: "Fresh Grocery Delivery",
-    title: "Farm Fresh Groceries, Delivered To Your Door",
-    subtitle: "Get up to 40% off your first order from local vendors near you.",
-    cta: "Shop Now",
-    image: "/images/slider/sl1.png",
-    bgimage: "/images/slider/christmas-gift-boxes-various-colors-placed-shopping-cart.jpg",
-    href: "/products",
+    "eyebrow": "Marketplace Finds",
+    "title": "Discover Quality Goods From Trusted Local Sellers",
+    "subtitle": "Get up to 40% off your first order from verified vendors near you.",
+    "cta": "Explore Deals",
+    "image": "/images/slider/sl1.png",
+    "bgimage": "/images/slider/christmas-gift-boxes-various-colors-placed-shopping-cart.jpg",
+    "href": "/products"
   },
   {
-    eyebrow: "Seasonal Harvest",
-    title: "Rare Fruits & Crisp Vegetables, Picked Daily",
-    subtitle: "Support local farmers while stocking your kitchen with the best.",
-    cta: "Explore Produce",
-    image: "/images/slider/hero-slide-2.png",
-    bgimage: "/images/slider/portrait-man-going-out-shopping-various-consumer-goods.jpg",
-    href: "/products",
+    "eyebrow": "New Arrivals",
+    "title": "Unique Collections & Trendy Items, Added Daily",
+    "subtitle": "Support independent creators while upgrading your everyday style.",
+    "cta": "Explore Collection",
+    "image": "/images/slider/hero-slide-2.png",
+    "bgimage": "/images/slider/portrait-man-going-out-shopping-various-consumer-goods.jpg",
+    "href": "/products"
   },
+
 ];
 
 export function HeroSlider() {

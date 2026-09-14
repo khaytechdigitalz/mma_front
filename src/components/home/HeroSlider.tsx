@@ -7,13 +7,23 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 
 const slides = [
+
+  {
+    eyebrow: "Winter Sale",
+    title: "Save Big On Pantry Essentials This Week",
+    subtitle: "Bundle deals and free delivery on orders over $50.",
+    cta: "View Deals",
+    image: "/images/slider/hero-slide-3.png",
+    bgimage: "/images/slider/contraception-method-composition-with-tiny-shopping-cart-copy-space.jpg",
+    href: "/products",
+  },
   {
     eyebrow: "Fresh Grocery Delivery",
     title: "Farm Fresh Groceries, Delivered To Your Door",
     subtitle: "Get up to 40% off your first order from local vendors near you.",
     cta: "Shop Now",
-    image: "/images/slider/hero-slide-1.webp",
-    bgimage: "/images/slider/sl-img-2.webp",
+    image: "/images/slider/sl1.png",
+    bgimage: "/images/slider/christmas-gift-boxes-various-colors-placed-shopping-cart.jpg",
     href: "/products",
   },
   {
@@ -22,16 +32,7 @@ const slides = [
     subtitle: "Support local farmers while stocking your kitchen with the best.",
     cta: "Explore Produce",
     image: "/images/slider/hero-slide-2.png",
-    bgimage: "/images/slider/sl-img-2.webp",
-    href: "/products",
-  },
-  {
-    eyebrow: "Winter Sale",
-    title: "Save Big On Pantry Essentials This Week",
-    subtitle: "Bundle deals and free delivery on orders over $50.",
-    cta: "View Deals",
-    image: "/images/slider/hero-slide-3.png",
-    bgimage: "/images/slider/sl-img-3.webp",
+    bgimage: "/images/slider/portrait-man-going-out-shopping-various-consumer-goods.jpg",
     href: "/products",
   },
 ];
@@ -76,6 +77,7 @@ export function HeroSlider() {
                         <Button size="lg">{slide.cta}</Button>
                       </Link>
                     </div>
+                    {/*
                     <div className="aspect-4/3 overflow-hidden rounded-2xl">
                       <img
                         src={slideImg}
@@ -83,6 +85,7 @@ export function HeroSlider() {
                         className="size-full object-cover"
                       />
                     </div>
+                    */}
                   </div>
                 </Container>
 

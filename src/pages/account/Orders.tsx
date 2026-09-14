@@ -1,7 +1,7 @@
 // src/pages/account/Orders.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, Loader2, ChevronLeft, ChevronRight, MapPinned } from "lucide-react";
+import { Package, ChevronLeft, ChevronRight, MapPinned, CreditCard } from "lucide-react";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
@@ -52,6 +52,15 @@ export function Orders() {
     };
   }, [page]);
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
   return (
     <div>
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "My Orders" }]} title="My Orders" />
@@ -62,8 +71,57 @@ export function Orders() {
 
             <div>
               {loading ? (
-                <div className="flex justify-center py-20">
-                  <Loader2 className="text-gray-tertiary size-8 animate-spin" />
+                <div className="space-y-4 animate-pulse">
+                  {/* Desktop Table Skeleton */}
+                  <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                    <div className="bg-gray-100 px-5 py-3 flex gap-6">
+                      {[60, 80, 50, 70, 70, 60, 70].map((w, i) => (
+                        <div key={i} className={`h-4 bg-gray-200 rounded`} style={{ width: `${w}px` }}></div>
+                      ))}
+                    </div>
+                    <div className="divide-y divide-gray-100">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="px-5 py-4 flex items-center justify-between">
+                          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                          <div className="h-4 w-20 bg-gray-100 rounded"></div>
+                          <div className="h-4 w-16 bg-gray-100 rounded"></div>
+                          <div className="h-4 w-16 bg-gray-100 rounded"></div>
+                          <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                          <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                          <div className="flex gap-2">
+                            <div className="h-8 w-14 bg-gray-200 rounded-lg"></div>
+                            <div className="h-8 w-14 bg-gray-200 rounded-lg"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mobile Card Skeleton */}
+                  <div className="grid grid-cols-1 gap-4 md:hidden">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="rounded-2xl border border-gray-200 p-4 space-y-3 bg-white">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                          <div className="space-y-1">
+                            <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                            <div className="h-3 w-20 bg-gray-100 rounded"></div>
+                          </div>
+                          <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                        </div>
+                        <div className="flex justify-between">
+                          <div className="h-3 w-16 bg-gray-100 rounded"></div>
+                          <div className="h-3 w-20 bg-gray-100 rounded"></div>
+                        </div>
+                        <div className="flex items-center justify-between pt-1">
+                          <div className="h-5 w-24 bg-gray-200 rounded"></div>
+                          <div className="flex gap-2">
+                            <div className="h-8 w-14 bg-gray-200 rounded-lg"></div>
+                            <div className="h-8 w-14 bg-gray-200 rounded-lg"></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : error ? (
                 <p className="text-error-dark py-10 text-center text-sm">
@@ -82,11 +140,12 @@ export function Orders() {
                 </div>
               ) : (
                 <>
-                  <div className="overflow-hidden rounded-2xl border border-gray-300">
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-300 bg-white">
                     <table className="w-full text-left">
                       <thead className="bg-gray-100">
                         <tr>
-                          {["Order", "Date", "Items", "Status", "Total", ""].map((h) => (
+                          {["Order", "Date", "Items", "Payment", "Status", "Total", ""].map((h) => (
                             <th key={h} className="text-gray-secondary px-5 py-3 text-sm font-medium">
                               {h}
                             </th>
@@ -94,44 +153,111 @@ export function Orders() {
                         </tr>
                       </thead>
                       <tbody>
-                        {orders.map((order) => (
-                          <tr key={order.id} className="border-t border-gray-200">
-                            <td className="text-gray-primary px-5 py-4 text-sm font-medium">
-                              #{order.order_number}
-                            </td>
-                            <td className="text-gray-secondary px-5 py-4 text-sm">{order.created_at}</td>
-                            <td className="text-gray-secondary px-5 py-4 text-sm">{order.items_count}</td>
-                            <td className="px-5 py-4">
-                              <span
-                                className={cn(
-                                  "rounded-full px-2.5 py-1 text-xs font-medium capitalize",
-                                  statusColors[order.status?.toLowerCase()] || "bg-gray-100 text-gray-600",
-                                )}
-                              >
-                                {order.status}
-                              </span>
-                            </td>
-                            <td className="text-gray-primary px-5 py-4 text-sm font-bold">
-                              {formatCurrency(order.total)}
-                            </td>
-                            <td className="px-5 py-4">
-                              <div className="flex items-center gap-2">
-                                <Link to={`/order-details?id=${order.id}`}>
-                                  <Button size="sm" variant="outline">
-                                    View
-                                  </Button>
-                                </Link>
-                                <Link to={`/track-order?id=${order.id}`}>
-                                  <Button size="sm" variant="ghost" icon={<MapPinned className="size-3.5" />}>
-                                    Track
-                                  </Button>
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                        {orders.map((order) => {
+                          const orderNo = order.order_no || order.order_number;
+                          const totalItems = order.items?.reduce((sum, item) => sum + item.quantity, 0) || order.items.length;
+                          return (
+                            <tr key={order.id} className="border-t border-gray-200 hover:bg-gray-50/50 transition-colors">
+                              <td className="text-gray-primary px-5 py-4 text-sm font-medium">
+                                #{orderNo}
+                              </td>
+                              <td className="text-gray-secondary px-5 py-4 text-sm">
+                                {formatDate(order.created_at)}
+                              </td>
+                              <td className="text-gray-secondary px-5 py-4 text-sm">
+                                {totalItems} Item(s)
+                              </td>
+                              <td className="text-gray-secondary px-5 py-4 text-sm uppercase">
+                                {order.payment_method || "—"}
+                              </td>
+                              <td className="px-5 py-4">
+                                <span
+                                  className={cn(
+                                    "rounded-full px-2.5 py-1 text-xs font-medium capitalize",
+                                    statusColors[order.order_status?.toLowerCase()] || "bg-gray-100 text-gray-600",
+                                  )}
+                                >
+                                  {order.order_status}
+                                </span>
+                              </td>
+                              <td className="text-gray-primary px-5 py-4 text-sm font-bold">
+                                {formatCurrency(Number(order.total_amount))}
+                              </td>
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-2">
+                                  <Link to={`/order-details?id=${order.id}`}>
+                                    <Button size="sm" variant="outline">
+                                      View
+                                    </Button>
+                                  </Link>
+                                  <Link to={`/track-order?id=${order.id}`}>
+                                    <Button size="sm" variant="ghost" icon={<MapPinned className="size-3.5" />}>
+                                      Track
+                                    </Button>
+                                  </Link>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
+                  </div>
+
+                  {/* Mobile Card-Based View */}
+                  <div className="grid grid-cols-1 gap-4 md:hidden">
+                    {orders.map((order) => {
+                      const orderNo = order.order_no || order.order_number;
+                      const totalItems = order.items?.reduce((sum, item) => sum + item.quantity, 0) || order.items.length;
+                      return (
+                        <div
+                          key={order.id}
+                          className="rounded-2xl border border-gray-300 p-4 space-y-3 bg-white shadow-xs"
+                        >
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <div>
+                              <p className="text-gray-primary text-sm font-bold">#{orderNo}</p>
+                              <p className="text-gray-tertiary text-xs">{formatDate(order.created_at)}</p>
+                            </div>
+                            <span
+                              className={cn(
+                                "rounded-full px-2.5 py-1 text-xs font-medium capitalize",
+                                statusColors[order.order_status?.toLowerCase()] || "bg-gray-100 text-gray-600",
+                              )}
+                            >
+                              {order.order_status}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs text-gray-secondary">
+                            <span>{totalItems} item(s)</span>
+                            {order.payment_method && (
+                              <span className="uppercase flex items-center gap-1 font-medium text-gray-primary">
+                                <CreditCard className="size-3 text-gray-400" /> {order.payment_method}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1">
+                            <span className="text-gray-primary text-base font-bold">
+                              {formatCurrency(Number(order.total_amount))}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <Link to={`/order-details?id=${order.id}`}>
+                                <Button size="sm" variant="outline">
+                                  View
+                                </Button>
+                              </Link>
+                              <Link to={`/track-order?id=${order.id}`}>
+                                <Button size="sm" variant="ghost" icon={<MapPinned className="size-3.5" />}>
+                                  Track
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {totalPages > 1 && (

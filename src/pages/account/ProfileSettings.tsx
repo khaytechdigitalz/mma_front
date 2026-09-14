@@ -1,6 +1,6 @@
 // src/pages/account/ProfileSettings.tsx
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Camera } from "lucide-react";
+import { Loader2, Camera, User } from "lucide-react";
 import { toast } from "sonner";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/Button";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { fetchProfile, updateProfile, updateProfileAvatar, type CustomerProfile } from "@/api/customer";
-import { getImageSrc } from "@/lib/utils";
+import { cn, getImageSrc } from "@/lib/utils";
 
 const inputClass =
-  "border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-sm focus:outline-0 focus:ring-1 focus:ring-primary-main";
+  "border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-sm focus:outline-0 focus:ring-1 focus:ring-primary-main bg-white text-gray-primary";
 
 export function ProfileSettings() {
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
@@ -83,21 +83,47 @@ export function ProfileSettings() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
             <AccountSidebar active="profile" customer={profile || undefined} />
 
-            <div className="max-w-lg">
+            <div className="max-w-2xl">
+              <div className="mb-6">
+                <h3 className="text-gray-primary text-lg font-bold">Profile Details</h3>
+                <p className="text-gray-secondary text-xs mt-0.5">Update your personal information and profile picture</p>
+              </div>
+
               {loading ? (
-                <div className="flex justify-center py-20">
-                  <Loader2 className="text-gray-tertiary size-8 animate-spin" />
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-xs animate-pulse space-y-6">
+                  {/* Avatar skeleton */}
+                  <div className="flex items-center gap-5 pb-6 border-b border-gray-100">
+                    <div className="size-20 bg-gray-200 rounded-full shrink-0"></div>
+                    <div className="space-y-2">
+                      <div className="h-5 w-36 bg-gray-200 rounded"></div>
+                      <div className="h-4 w-48 bg-gray-100 rounded"></div>
+                    </div>
+                  </div>
+
+                  {/* Form fields skeleton */}
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="space-y-1.5">
+                        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                        <div className="h-12 w-full bg-gray-100 rounded-lg"></div>
+                      </div>
+                    ))}
+                    <div className="h-11 w-32 bg-gray-200 rounded-lg mt-6"></div>
+                  </div>
                 </div>
               ) : (
-                <>
-                  <div className="mb-8 flex items-center gap-5">
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-xs">
+                  <div className="mb-8 flex items-center gap-5 pb-6 border-b border-gray-100">
                     <div className="relative">
-                      <div className="bg-primary-lighter size-20 shrink-0 overflow-hidden rounded-full">
+                      <div className="bg-primary-lighter size-20 shrink-0 overflow-hidden rounded-full ring-2 ring-gray-100">
                         {profile?.avatar ? (
                           <img
                             src={getImageSrc(profile.avatar)}
                             alt={profile?.name || "Profile"}
                             className="size-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/placeholder.png";
+                            }}
                           />
                         ) : (
                           <PlaceholderImage label={profile?.name || "Profile"} className="size-full" tone="primary" />
@@ -107,7 +133,7 @@ export function ProfileSettings() {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploadingAvatar}
-                        className="bg-primary-main absolute -right-1 -bottom-1 flex size-8 items-center justify-center rounded-full text-white shadow-md cursor-pointer disabled:opacity-60"
+                        className="bg-primary-main hover:bg-primary-dark absolute -right-1 -bottom-1 flex size-8 items-center justify-center rounded-full text-white shadow-md cursor-pointer disabled:opacity-60 transition-colors"
                         aria-label="Change profile photo"
                       >
                         {uploadingAvatar ? (
@@ -125,7 +151,9 @@ export function ProfileSettings() {
                       />
                     </div>
                     <div>
-                      <p className="text-gray-primary text-base font-bold">{profile?.name}</p>
+                      <p className="text-gray-primary text-base font-bold flex items-center gap-1.5">
+                        <User className="size-4 text-primary-main" /> {profile?.name || "User"}
+                      </p>
                       <p className="text-gray-tertiary text-sm">{profile?.email}</p>
                     </div>
                   </div>
@@ -142,14 +170,18 @@ export function ProfileSettings() {
                       />
                     </div>
                     <div>
-                      <label className="text-gray-secondary mb-1.5 block text-sm font-medium">Email Address</label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-gray-secondary block text-sm font-medium">Email Address</label>
+                        <span className="text-xs text-gray-tertiary italic">Email cannot be changed</span>
+                      </div>
                       <input
                         required
                         type="email"
+                        disabled
                         value={form.email}
                         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                         placeholder="Email"
-                        className={inputClass}
+                        className={cn(inputClass, "opacity-75 cursor-not-allowed bg-gray-50")}
                       />
                     </div>
                     <div>
@@ -162,11 +194,19 @@ export function ProfileSettings() {
                         className={inputClass}
                       />
                     </div>
-                    <Button type="submit" disabled={saving}>
-                      {saving ? <Loader2 className="size-4 animate-spin" /> : "Save Changes"}
-                    </Button>
+                    <div className="pt-2">
+                      <Button type="submit" disabled={saving}>
+                        {saving ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="size-4 animate-spin" /> Saving...
+                          </span>
+                        ) : (
+                          "Save Changes"
+                        )}
+                      </Button>
+                    </div>
                   </form>
-                </>
+                </div>
               )}
             </div>
           </div>

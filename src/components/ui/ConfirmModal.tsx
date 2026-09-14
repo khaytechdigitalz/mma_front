@@ -49,17 +49,21 @@ export function ConfirmModal({
         </div>
         <h3 className="text-gray-primary mb-2 text-lg font-bold">{title}</h3>
         {description && <p className="text-gray-secondary mb-6 text-sm">{description}</p>}
-        <div className="flex gap-3">
-          <Button variant="outline" fullWidth onClick={onCancel} disabled={loading}>
+        <div className="grid grid-cols-2 gap-3">
+          <Button variant="outline" size="sm" fullWidth onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>
           <Button
+            size="sm"
             fullWidth
             variant={tone === "danger" ? "danger" : "primary"}
             onClick={onConfirm}
             disabled={loading}
           >
-            {loading ? <Loader2 className="size-4 animate-spin" /> : confirmLabel}
+            <span className="flex items-center justify-center gap-2">
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {confirmLabel}
+            </span>
           </Button>
         </div>
       </div>

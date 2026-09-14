@@ -1,6 +1,7 @@
 // src/pages/account/SecuritySettings.tsx
 import { useEffect, useState } from "react";
 import { Loader2, Eye, EyeOff, ShieldCheck, ShieldOff, X, KeyRound } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -15,7 +16,7 @@ import {
 } from "@/api/customer";
 
 const inputClass =
-  "border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 pr-11 text-sm focus:outline-0 focus:ring-1 focus:ring-primary-main";
+  "border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 pr-11 text-sm focus:outline-0 focus:ring-1 focus:ring-primary-main bg-white text-gray-primary";
 
 function PasswordField({
   value,
@@ -41,7 +42,7 @@ function PasswordField({
       <button
         type="button"
         onClick={() => setShow((v) => !v)}
-        className="text-gray-tertiary hover:text-gray-secondary absolute top-1/2 right-4 -translate-y-1/2"
+        className="text-gray-tertiary hover:text-gray-secondary absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer"
         aria-label={show ? "Hide password" : "Show password"}
       >
         {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -61,7 +62,7 @@ export function SecuritySettings() {
   const [twoFAEnabled, setTwoFAEnabled] = useState(false);
   const [twoFALoading, setTwoFALoading] = useState(true);
   const [setupOpen, setSetupOpen] = useState(false);
-  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingUp, setSettingUp] = useState(false);
   const [confirmCode, setConfirmCode] = useState("");
@@ -106,7 +107,7 @@ export function SecuritySettings() {
     setSettingUp(true);
     try {
       const res = await enableTwoFactor();
-      setQrCode(res?.data?.qr_code || null);
+      setQrCodeUrl(res?.data?.qr_code_url || res?.data?.qr_code || null);
       setSecret(res?.data?.secret || null);
       setSetupOpen(true);
     } catch (err: any) {
@@ -125,7 +126,7 @@ export function SecuritySettings() {
       setTwoFAEnabled(true);
       setSetupOpen(false);
       setConfirmCode("");
-      setQrCode(null);
+      setQrCodeUrl(null);
       setSecret(null);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Invalid code. Please try again.");
@@ -158,11 +159,16 @@ export function SecuritySettings() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
             <AccountSidebar active="security" />
 
-            <div className="max-w-lg space-y-8">
+            <div className="max-w-xl space-y-8">
+              <div>
+                <h3 className="text-gray-primary text-lg font-bold">Security & Privacy</h3>
+                <p className="text-gray-secondary text-xs mt-0.5">Manage your account password and authentication settings</p>
+              </div>
+
               {/* Password */}
-              <div className="rounded-2xl border border-gray-300 p-6">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
                 <h3 className="text-gray-primary mb-1 flex items-center gap-2 text-base font-bold">
-                  <KeyRound className="size-4" /> Change Password
+                  <KeyRound className="size-4 text-primary-main" /> Change Password
                 </h3>
                 <p className="text-gray-secondary mb-5 text-sm">
                   Use a strong password you don't use anywhere else.
@@ -179,16 +185,24 @@ export function SecuritySettings() {
                     onChange={setConfirmPassword}
                     placeholder="Confirm new password"
                   />
-                  <Button type="submit" disabled={changingPassword}>
-                    {changingPassword ? <Loader2 className="size-4 animate-spin" /> : "Update Password"}
-                  </Button>
+                  <div className="pt-1">
+                    <Button type="submit" disabled={changingPassword}>
+                      {changingPassword ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="size-4 animate-spin" /> Updating...
+                        </span>
+                      ) : (
+                        "Update Password"
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </div>
 
               {/* 2FA */}
-              <div className="rounded-2xl border border-gray-300 p-6">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
                 <h3 className="text-gray-primary mb-1 flex items-center gap-2 text-base font-bold">
-                  <ShieldCheck className="size-4" /> Two-Factor Authentication
+                  <ShieldCheck className="size-4 text-primary-main" /> Two-Factor Authentication
                 </h3>
                 <p className="text-gray-secondary mb-5 text-sm">
                   Add an extra layer of security - a 6-digit code from your authenticator app will be
@@ -196,7 +210,10 @@ export function SecuritySettings() {
                 </p>
 
                 {twoFALoading ? (
-                  <Loader2 className="text-gray-tertiary size-5 animate-spin" />
+                  <div className="flex items-center justify-between animate-pulse">
+                    <div className="h-8 w-24 bg-gray-200 rounded-full"></div>
+                    <div className="h-9 w-28 bg-gray-200 rounded-lg"></div>
+                  </div>
                 ) : twoFAEnabled ? (
                   <div className="flex items-center justify-between">
                     <span className="bg-success-light text-success-dark-main flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium">
@@ -213,7 +230,13 @@ export function SecuritySettings() {
                   </div>
                 ) : (
                   <Button size="sm" disabled={settingUp} onClick={startTwoFactorSetup}>
-                    {settingUp ? <Loader2 className="size-4 animate-spin" /> : "Enable 2FA"}
+                    {settingUp ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="size-4 animate-spin" /> Setting up...
+                      </span>
+                    ) : (
+                      "Enable 2FA"
+                    )}
                   </Button>
                 )}
               </div>
@@ -225,23 +248,23 @@ export function SecuritySettings() {
       {/* Setup 2FA modal */}
       {setupOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setSetupOpen(false)} />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setSetupOpen(false)} />
           <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
             <button
               onClick={() => setSetupOpen(false)}
-              className="text-gray-tertiary hover:text-gray-primary absolute top-4 right-4 cursor-pointer"
+              className="text-gray-tertiary hover:text-gray-primary absolute top-4 right-4 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="Close"
             >
               <X className="size-4" />
             </button>
-            <h3 className="text-gray-primary mb-4 text-lg font-bold">Set Up Two-Factor Authentication</h3>
-            <p className="text-gray-secondary mb-4 text-sm">
+            <h3 className="text-gray-primary mb-2 text-lg font-bold">Set Up Two-Factor Authentication</h3>
+            <p className="text-gray-secondary mb-4 text-xs">
               Scan this QR code with an authenticator app (Google Authenticator, Authy, etc.), then enter
               the 6-digit code it generates.
             </p>
-            {qrCode && (
-              <div className="mb-4 flex justify-center">
-                <img src={qrCode} alt="Two-factor QR code" className="size-40 rounded-lg border border-gray-200" />
+            {qrCodeUrl && (
+              <div className="mb-4 flex justify-center p-3 bg-white rounded-xl border border-gray-200">
+                <QRCodeSVG value={qrCodeUrl} size={160} level="M" />
               </div>
             )}
             {secret && (
@@ -257,7 +280,7 @@ export function SecuritySettings() {
                 value={confirmCode}
                 onChange={(e) => setConfirmCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="6-digit code"
-                className="border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-center text-lg tracking-[0.5em] focus:outline-0 focus:ring-1 focus:ring-primary-main"
+                className="border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-center text-lg tracking-[0.5em] focus:outline-0 focus:ring-1 focus:ring-primary-main bg-white text-gray-primary"
               />
               <Button type="submit" fullWidth disabled={confirming}>
                 {confirming ? <Loader2 className="size-4 animate-spin" /> : "Confirm & Enable"}
@@ -270,17 +293,17 @@ export function SecuritySettings() {
       {/* Disable 2FA modal */}
       {disableOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDisableOpen(false)} />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setDisableOpen(false)} />
           <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
             <button
               onClick={() => setDisableOpen(false)}
-              className="text-gray-tertiary hover:text-gray-primary absolute top-4 right-4 cursor-pointer"
+              className="text-gray-tertiary hover:text-gray-primary absolute top-4 right-4 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="Close"
             >
               <X className="size-4" />
             </button>
-            <h3 className="text-gray-primary mb-4 text-lg font-bold">Disable Two-Factor Authentication</h3>
-            <p className="text-gray-secondary mb-4 text-sm">
+            <h3 className="text-gray-primary mb-2 text-lg font-bold">Disable Two-Factor Authentication</h3>
+            <p className="text-gray-secondary mb-4 text-xs">
               Enter a current 6-digit code from your authenticator app to confirm.
             </p>
             <form onSubmit={handleDisableTwoFactor} className="space-y-4">
@@ -291,7 +314,7 @@ export function SecuritySettings() {
                 value={disableCode}
                 onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="6-digit code"
-                className="border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-center text-lg tracking-[0.5em] focus:outline-0 focus:ring-1 focus:ring-primary-main"
+                className="border-gray-tertiary/32 h-12 w-full rounded-lg border px-4 text-center text-lg tracking-[0.5em] focus:outline-0 focus:ring-1 focus:ring-primary-main bg-white text-gray-primary"
               />
               <Button type="submit" variant="danger" fullWidth disabled={disabling}>
                 {disabling ? <Loader2 className="size-4 animate-spin" /> : "Disable 2FA"}

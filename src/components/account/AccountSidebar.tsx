@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/components/account/AccountSidebar.tsx
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -12,9 +13,9 @@ import {
 import { toast } from "sonner";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { cn } from "@/lib/utils";
+import { cn, getImageSrc } from "@/lib/utils";
 import { clearAuthToken } from "@/lib/auth";
-import { logoutUser } from "@/api/customer";
+import { logoutUser, fetchProfile } from "@/api/customer";
 
 export type AccountSection =
   | "dashboard"
@@ -41,22 +42,49 @@ interface CustomerSummary {
 
 export function AccountSidebar({
   active,
-  customer,
+  customer: initialCustomer,
 }: {
   active: AccountSection;
   customer?: CustomerSummary;
 }) {
   const navigate = useNavigate();
+  const [customer, setCustomer] = useState<CustomerSummary | undefined>(initialCustomer);
+  const [loading, setLoading] = useState(!initialCustomer);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    // If customer data wasn't provided via props, fetch it independently
+    if (!initialCustomer) {
+      let cancelled = false;
+      fetchProfile()
+        .then((res) => {
+          if (!cancelled && res?.data) {
+            setCustomer({
+              name: res.data.name,
+              email: res.data.email,
+              avatar: res.data.avatar,
+            });
+          }
+        })
+        .catch((err) => console.error("Failed to load account sidebar profile", err))
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+      return () => {
+        cancelled = true;
+      };
+    } else {
+      setCustomer(initialCustomer);
+      setLoading(false);
+    }
+  }, [initialCustomer]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
       await logoutUser();
     } catch (err) {
-      // Even if the server call fails (expired token, offline, etc.) we still
-      // clear the local session below - the user's intent to leave wins.
       console.error("Server logout failed, clearing local session anyway", err);
     } finally {
       clearAuthToken();
@@ -68,17 +96,41 @@ export function AccountSidebar({
   };
 
   return (
-    <aside className="h-fit space-y-1 rounded-2xl border border-gray-300 p-4">
-      <div className="mb-4 flex items-center gap-3 border-b border-gray-200 pb-4">
-        <div className="bg-primary-lighter size-12 shrink-0 overflow-hidden rounded-full">
-          <PlaceholderImage label={customer?.name || "Account"} className="size-full" tone="primary" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-gray-primary truncate text-sm font-semibold">
-            {customer?.name || "My Account"}
-          </p>
-          <p className="text-gray-tertiary truncate text-xs">{customer?.email || ""}</p>
-        </div>
+    <aside className="h-fit space-y-1 rounded-2xl border border-gray-200 bg-white p-4 shadow-xs">
+      {/* User Info Header with Skeleton Support */}
+      <div className="mb-4 flex items-center gap-3 border-b border-gray-100 pb-4">
+        {loading ? (
+          <div className="flex items-center gap-3 w-full animate-pulse">
+            <div className="size-12 shrink-0 rounded-full bg-gray-200"></div>
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="h-4 w-28 bg-gray-200 rounded"></div>
+              <div className="h-3 w-36 bg-gray-100 rounded"></div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="bg-primary-lighter size-12 shrink-0 overflow-hidden rounded-full ring-1 ring-gray-100">
+              {customer?.avatar ? (
+                <img
+                  src={getImageSrc(customer.avatar)}
+                  alt={customer?.name || "Account"}
+                  className="size-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/images/placeholder.png";
+                  }}
+                />
+              ) : (
+                <PlaceholderImage label={customer?.name || "Account"} className="size-full" tone="primary" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-gray-primary truncate text-sm font-semibold">
+                {customer?.name || "My Account"}
+              </p>
+              <p className="text-gray-tertiary truncate text-xs">{customer?.email || ""}</p>
+            </div>
+          </>
+        )}
       </div>
 
       {NAV_ITEMS.map(({ id, label, href, icon: Icon }) => (

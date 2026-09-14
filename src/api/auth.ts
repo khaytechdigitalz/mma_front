@@ -31,6 +31,11 @@ export async function loginUser(credentials: LoginCredentials) {
   return response.data;
 }
 
+export async function verifyLogin2fa(payload: { token: string; one_time_password: string }) {
+  const response = await apiClient.post("/auth/login/2fa", payload);
+  return response.data;
+}
+
 export async function forgotPassword(email: string) {
   const response = await apiClient.post("/auth/forgotpassword", { email });
   return response.data;

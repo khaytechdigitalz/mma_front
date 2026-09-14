@@ -21,7 +21,7 @@ import { EmptyCartScreen } from "@/pages/EmptyCartScreen";
 import { ComingSoon } from "@/pages/ComingSoon";
 import { PrivacyPolicy } from "@/pages/PrivacyPolicy";
 import { TermsAndConditions } from "@/pages/TermsAndConditions";
-import { UserDashboard } from "@/pages/UserDashboard";
+import { UserDashboard } from "@/pages/account/UserDashboard";
 import { Orders } from "@/pages/account/Orders";
 import { OrderDetails } from "@/pages/account/OrderDetails";
 import { TrackOrder } from "@/pages/account/TrackOrder";

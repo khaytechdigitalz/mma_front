@@ -77,7 +77,7 @@ export function MobileMenu() {
                     ["Product Details", "/product-details-1"],
                     ["Wishlist", "/wishlist"],
                     ["Cart", "/cart"],
-                    ["Compare", "/compare-list"],
+                   // ["Compare", "/compare-list"],
                   ].map(([label, href]) => (
                     <li key={href}>
                       <Link onClick={close} to={href} className="text-gray-secondary hover:text-primary-main text-sm">

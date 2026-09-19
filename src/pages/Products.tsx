@@ -5,6 +5,7 @@ import { SlidersHorizontal, LayoutGrid, List, ChevronLeft, ChevronRight } from "
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ProductCard } from "@/components/ui/ProductCard";
+import { ProductList } from "@/components/ui/ProductList";
 import { fetchProducts, type ProductItem } from "@/api/products";
 import { fetchCategories, type Category } from "@/api/categories";
 import { cn, formatCurrency } from "@/lib/utils";
@@ -37,9 +38,6 @@ export function Products() {
   // `priceCeiling` is the fixed upper bound of the slider track (derived once
   // from the catalog). `maxPrice` is the live, user-adjustable thumb position,
   // and `appliedMaxPrice` is the debounced value actually sent to the server.
-  // Keeping these separate is what lets the slider move freely - previously
-  // the slider's `max` and `value` were the same state, so the thumb could
-  // never sit anywhere but the far right.
   const priceCeilingSetRef = useRef(false);
   const [priceCeiling, setPriceCeiling] = useState(DEFAULT_PRICE_CEILING);
   const [maxPrice, setMaxPrice] = useState(DEFAULT_PRICE_CEILING);
@@ -227,7 +225,7 @@ export function Products() {
               </div>
 
               {loading ? (
-                // Skeleton Loader Grid
+                // Skeleton Loader Grid/List
                 <div
                   className={cn(
                     "grid gap-5",
@@ -239,14 +237,15 @@ export function Products() {
                   {Array.from({ length: 8 }).map((_, index) => (
                     <div
                       key={index}
-                      className="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-xs animate-pulse"
+                      className={cn(
+                        "flex overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-xs animate-pulse",
+                        view === "grid" ? "flex-col" : "items-center gap-4",
+                      )}
                     >
-                      <div className="aspect-square w-full bg-gray-200 rounded-xl mb-4" />
-                      <div className="h-3 w-1/3 bg-gray-200 rounded mb-2" />
-                      <div className="h-4 w-4/5 bg-gray-200 rounded mb-4" />
-                      <div className="mt-auto flex items-center justify-between">
-                        <div className="h-5 w-1/4 bg-gray-200 rounded" />
-                        <div className="size-9 bg-gray-200 rounded-full" />
+                      <div className={cn("bg-gray-200 rounded-xl mb-4", view === "grid" ? "aspect-square w-full" : "size-24 shrink-0")} />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 w-1/3 bg-gray-200 rounded" />
+                        <div className="h-4 w-4/5 bg-gray-200 rounded" />
                       </div>
                     </div>
                   ))}
@@ -257,6 +256,7 @@ export function Products() {
                 </p>
               ) : (
                 <>
+                  {/* Dynamic Grid vs List Toggle Rendering */}
                   <div
                     className={cn(
                       "grid gap-5",
@@ -265,9 +265,13 @@ export function Products() {
                         : "grid-cols-1",
                     )}
                   >
-                    {filtered.map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
+                    {filtered.map((product) =>
+                      view === "grid" ? (
+                        <ProductCard key={product.id} product={product} />
+                      ) : (
+                        <ProductList key={product.id} product={product} />
+                      ),
+                    )}
                   </div>
 
                   {/* Pagination Controls */}

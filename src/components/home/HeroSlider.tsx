@@ -15,7 +15,7 @@ const slides = [
     "subtitle": "Explore unique art, fashion, and everyday essentials all in one place.",
     "cta": "Shop Now",
     "image": "/images/slider/hero-slide-3.png",
-    "bgimage": "/images/slider/Screenshot 2026-09-15 at 12.04.09 AM.png",
+    "bgimage": "/images/slider/closeup-handsome-black-man-with-long-beard-laughing-having-fun-looking-carefree-standing.jpg",
     "href": "/products"
   },
   {

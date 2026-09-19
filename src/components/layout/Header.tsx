@@ -244,7 +244,7 @@ export function Header() {
           { label: "All Products", href: "/products" },
           { label: "Wishlist", href: "/wishlist" },
           { label: "Cart", href: "/cart" },
-          { label: "Compare", href: "/compare-list" },
+        //  { label: "Compare", href: "/compare-list" },
         ],
       },
       {
@@ -351,9 +351,6 @@ export function Header() {
               </div>
             </div>
             <div className="flex items-center gap-4.5">
-              <Link to="/faq" className="hover:text-success-light text-sm text-white transition">
-                About Us
-              </Link>
               <Link to="/user-dashboard" className="hover:text-success-light text-sm text-white transition">
                 My Account
               </Link>
@@ -372,18 +369,7 @@ export function Header() {
             <Logo />
             <SearchBar className="w-[520px]" />
             <div className="flex items-center gap-6">
-              <Link
-                to="/compare-list"
-                className="text-gray-secondary hover:text-primary-main relative flex flex-col items-center text-xs"
-              >
-                <GitCompare className="size-6" />
-                Compare
-                {compareList.length > 0 && (
-                  <span className="bg-primary-main absolute -top-1 -right-2 flex size-4 items-center justify-center rounded-full text-[10px] text-white">
-                    {compareList.length}
-                  </span>
-                )}
-              </Link>
+              
               <Link
                 to="/wishlist"
                 className="text-gray-secondary hover:text-primary-main relative flex flex-col items-center text-xs"

@@ -1,5 +1,6 @@
 // src/components/home/BestSellingTabs.tsx
 import { useEffect, useState } from "react";
+import { TrendingUp, Sparkles } from "lucide-react";
 import { Container, Section, SectionHeading } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { fetchBestsellers, type BestsellerCategoryGroup } from "@/api/home-products";
@@ -36,7 +37,20 @@ export function BestSellingTabs() {
     return (
       <Section>
         <Container>
-          <div className="py-12 text-center text-gray-secondary">Loading best sellers...</div>
+          <div className="flex flex-col items-center mb-8">
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-2" />
+            <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
+          </div>
+          <div className="mx-auto mb-10 flex max-w-xl justify-center gap-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-10 w-28 bg-gray-100 rounded-full animate-pulse" />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-square rounded-2xl bg-gray-100 animate-pulse" />
+            ))}
+          </div>
         </Container>
       </Section>
     );
@@ -51,30 +65,40 @@ export function BestSellingTabs() {
   return (
     <Section>
       <Container>
-        <SectionHeading
-          title="Best Selling Products"
-          subtitle="Enjoy up to 40% off through the weekend"
-          align="center"
-        />
-        <div className="mx-auto mb-10 flex max-w-3xl flex-nowrap justify-center gap-3 overflow-x-auto">
-          {categories.map((cat) => (
-            <button
-              key={cat.category_id}
-              onClick={() => setActiveCategoryId(cat.category_id)}
-              className={cn(
-                "inline-flex shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 cursor-pointer",
-                activeCategoryId === cat.category_id
-                  ? "bg-primary-main text-success-light"
-                  : "border-gray-tertiary/32 hover:border-primary-main hover:bg-primary-main hover:text-success-light border",
-              )}
-            >
-              {cat.category_name}
-            </button>
-          ))}
+        {/* Section Heading with Theme Badge */}
+        <div className="text-center mb-8"> 
+          <SectionHeading
+            title="Best Selling Masterpieces"
+            subtitle="Explore our top-rated artisan goods with special weekend discounts"
+            align="center"
+          />
         </div>
+
+        {/* Category Filter Tabs */}
+        <div className="mx-auto mb-10 flex max-w-3xl flex-nowrap justify-start sm:justify-center gap-2.5 overflow-x-auto pb-2 px-2 scrollbar-none">
+          {categories.map((cat) => {
+            const isActive = activeCategoryId === cat.category_id;
+            return (
+              <button
+                key={cat.category_id}
+                onClick={() => setActiveCategoryId(cat.category_id)}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer shadow-xs",
+                  isActive
+                    ? "bg-primary-main text-white shadow-md"
+                    : "border border-gray-200 bg-white text-gray-700 hover:border-primary-main hover:bg-gray-50 hover:text-primary-main",
+                )}
+              >
+                <Sparkles className={cn("size-3.5", isActive ? "text-white/80" : "text-gray-400")} />
+                {cat.category_name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Products Grid */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {activeGroup?.products?.map((p: any) => {
-            // Normalize the partial bestseller product shape into a complete ProductItem expected by ProductCard
             const normalizedProduct: ProductItem = {
               id: p.id,
               seller_id: p.seller_id || 1,

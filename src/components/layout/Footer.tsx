@@ -17,7 +17,7 @@ const shopLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-const categoryLinks = ["Grocery", "Bakery", "Ice-cream", "Energy Drinks"];
+const categoryLinks = ["Music", "Portery", "Home-Decor", "Art & Painting"];
 
 export function Footer() {
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Heart, GitCompare, ShoppingCart, Truck, ShieldCheck, Loader2 } from "lucide-react";
+import { Heart, ShoppingCart, Truck, ShieldCheck, Loader2 } from "lucide-react";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
@@ -24,7 +24,7 @@ export function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
 
-  const { toggleWishlist, isWishlisted, toggleCompare, isCompared, addToCart } = useStore();
+  const { toggleWishlist, isWishlisted, addToCart } = useStore();
 
   // Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -199,17 +199,7 @@ export function ProductDetails() {
                 >
                   <Heart className={cn("size-4", isWishlisted(String(product.id)) && "fill-current")} />
                   Wishlist
-                </button>
-                <button
-                  onClick={() => toggleCompare(String(product.id))}
-                  className={cn(
-                    "border-gray-tertiary/32 flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer",
-                    isCompared(String(product.id)) && "border-primary-main text-primary-main",
-                  )}
-                >
-                  <GitCompare className="size-4" />
-                  Compare
-                </button>
+                </button> 
               </div>
 
               <div className="space-y-3 rounded-xl border border-gray-300 p-4">

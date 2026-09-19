@@ -1,12 +1,14 @@
 // src/pages/account/OrderDetails.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { MapPinned, PackageX, ArrowLeft, Truck, Banknote } from "lucide-react";
+import { useReactToPrint } from "react-to-print";
+import { MapPinned, PackageX, ArrowLeft, Truck, Banknote, Printer } from "lucide-react";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
+import { OrderReceipt } from "@/components/order/OrderReceipt";
 import { fetchOrderDetails, type OrderDetail } from "@/api/customer";
 import { formatCurrency, getImageSrc, cn } from "@/lib/utils";
 
@@ -25,6 +27,13 @@ export function OrderDetails() {
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: receiptRef,
+    documentTitle: order ? `Invoice-Order-${order.order_no}` : "Order-Receipt",
+  });
 
   useEffect(() => {
     if (!id) {
@@ -58,7 +67,7 @@ export function OrderDetails() {
     <div>
       <Breadcrumb
         items={[{ label: "Home", href: "/" }, { label: "My Orders", href: "/my-orders" }, { label: "Order Details" }]}
-        title={order ? `Order #${order.order_number}` : "Order Details"}
+        title={order ? `Order #${order.order_no}` : "Order Details"}
       />
       <Section>
         <Container>
@@ -122,7 +131,7 @@ export function OrderDetails() {
                 <div className="space-y-6">
                   <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gray-300 bg-white p-5">
                     <div>
-                      <p className="text-gray-primary text-lg font-bold">Order #{order.order_number}</p>
+                      <p className="text-gray-primary text-lg font-bold">Order #{order.order_no}</p>
                       <p className="text-gray-tertiary text-sm">Placed on {order.created_at}</p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -134,6 +143,14 @@ export function OrderDetails() {
                       >
                         {order.status}
                       </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        icon={<Printer className="size-3.5" />}
+                        onClick={() => handlePrint()}
+                      >
+                        Print Receipt
+                      </Button>
                       <Link to={`/track-order?id=${order.id}`}>
                         <Button size="sm" icon={<MapPinned className="size-3.5" />}>
                           Track Order
@@ -247,6 +264,11 @@ export function OrderDetails() {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Hidden Printable Receipt Component Container */}
+                  <div className="hidden">
+                    <OrderReceipt ref={receiptRef} order={order} />
                   </div>
                 </div>
               )}

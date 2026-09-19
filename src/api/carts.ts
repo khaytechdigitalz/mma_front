@@ -16,6 +16,7 @@ export interface CartItem {
   product_id: number;
   seller_id: number | null;
   quantity: number;
+  sku: string;
   unit_price: string;
   total_price: string;
   variation_options: any | null;
@@ -26,6 +27,7 @@ export interface CartItem {
 
 export interface CartData {
   cart_id: number;
+  sku: string;
   items: CartItem[];
   subtotal: number;
   total_items: number;

@@ -85,106 +85,167 @@ export function Cart() {
                   Clear Cart
                 </button>
               </div>
-              <div className="overflow-hidden rounded-2xl border border-gray-300">
-                <table className="w-full text-left">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Product</th>
-                      <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Price</th>
-                      <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Quantity</th>
-                      <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Total</th>
-                      <th className="px-5 py-3" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cartLoading && cartItems.length === 0 ? (
-                      // Skeleton Loader Rows
-                      Array.from({ length: 3 }).map((_, index) => (
-                        <tr key={index} className="border-t border-gray-200 animate-pulse">
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="size-16 shrink-0 rounded-lg bg-gray-200" />
-                              <div className="space-y-2 w-36">
-                                <div className="h-4 bg-gray-200 rounded w-full" />
-                                <div className="h-3 bg-gray-200 rounded w-2/3" />
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="h-4 bg-gray-200 rounded w-16" />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="h-9 bg-gray-200 rounded w-28" />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="h-4 bg-gray-200 rounded w-16" />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="size-4 bg-gray-200 rounded" />
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      cartItems.map((item) => {
-                        const unitPrice = Number(item.unit_price || item.product?.unit_price || 0);
-                        const itemTotal = Number(item.total_price) || unitPrice * item.quantity;
-                        const isItemLoading = actionLoading === item.id;
 
-                        return (
-                          <tr key={item.id} className="border-t border-gray-200">
+              {/* Responsive Container: Table on Desktop, Cards on Mobile */}
+              <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Product</th>
+                        <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Price</th>
+                        <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Quantity</th>
+                        <th className="text-gray-secondary px-5 py-3 text-sm font-medium">Total</th>
+                        <th className="px-5 py-3" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cartLoading && cartItems.length === 0 ? (
+                        Array.from({ length: 3 }).map((_, index) => (
+                          <tr key={index} className="border-t border-gray-200 animate-pulse">
                             <td className="px-5 py-4">
                               <div className="flex items-center gap-3">
-                                <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                                  {item.product?.thumbnail ? (
-                                    <img
-                                      src={getImageSrc(item.product.thumbnail)}
-                                      alt={item.product?.name || "Product"}
-                                      className="size-full object-cover"
-                                    />
-                                  ) : (
-                                    <PlaceholderImage label={item.product?.name || "Product"} className="size-full" />
-                                  )}
+                                <div className="size-16 shrink-0 rounded-lg bg-gray-200" />
+                                <div className="space-y-2 w-36">
+                                  <div className="h-4 bg-gray-200 rounded w-full" />
+                                  <div className="h-3 bg-gray-200 rounded w-2/3" />
                                 </div>
+                              </div>
+                            </td>
+                            <td className="px-5 py-4"><div className="h-4 bg-gray-200 rounded w-16" /></td>
+                            <td className="px-5 py-4"><div className="h-9 bg-gray-200 rounded w-28" /></td>
+                            <td className="px-5 py-4"><div className="h-4 bg-gray-200 rounded w-16" /></td>
+                            <td className="px-5 py-4"><div className="size-4 bg-gray-200 rounded" /></td>
+                          </tr>
+                        ))
+                      ) : (
+                        cartItems.map((item) => {
+                          const unitPrice = Number(item.unit_price || item.product?.unit_price || 0);
+                          const itemTotal = Number(item.total_price) || unitPrice * item.quantity;
+                          const isItemLoading = actionLoading === item.id;
+
+                          return (
+                            <tr key={item.id} className="border-t border-gray-200">
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                                    {item.product?.thumbnail ? (
+                                      <img
+                                        src={getImageSrc(item.product.thumbnail)}
+                                        alt={item.product?.name || "Product"}
+                                        className="size-full object-cover"
+                                      />
+                                    ) : (
+                                      <PlaceholderImage label={item.product?.name || "Product"} className="size-full" />
+                                    )}
+                                  </div>
+                                  <span className="text-gray-primary line-clamp-2 text-sm font-medium">
+                                    {item.product?.name || "Product Item"}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="text-gray-primary px-5 py-4 text-sm">
+                                {formatCurrency(unitPrice)}
+                              </td>
+                              <td className="px-5 py-4">
+                                <QuantityStepper
+                                  value={item.quantity}
+                                  onChange={(q) => handleUpdateQuantity(item.id, q)}
+                                />
+                              </td>
+                              <td className="text-gray-primary px-5 py-4 text-sm font-bold">
+                                {formatCurrency(itemTotal)}
+                              </td>
+                              <td className="px-5 py-4">
+                                <button
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  disabled={isItemLoading}
+                                  className="text-gray-tertiary hover:text-error-dark cursor-pointer disabled:opacity-50"
+                                >
+                                  {isItemLoading ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card Stack View */}
+                <div className="block md:hidden divide-y divide-gray-200">
+                  {cartLoading && cartItems.length === 0 ? (
+                    Array.from({ length: 3 }).map((_, index) => (
+                      <div key={index} className="p-4 space-y-3 animate-pulse">
+                        <div className="flex gap-3">
+                          <div className="size-16 rounded-lg bg-gray-200 shrink-0" />
+                          <div className="space-y-2 flex-1">
+                            <div className="h-4 bg-gray-200 rounded w-full" />
+                            <div className="h-3 bg-gray-200 rounded w-1/2" />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    cartItems.map((item) => {
+                      const unitPrice = Number(item.unit_price || item.product?.unit_price || 0);
+                      const itemTotal = Number(item.total_price) || unitPrice * item.quantity;
+                      const isItemLoading = actionLoading === item.id;
+
+                      return (
+                        <div key={item.id} className="p-4 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                              {item.product?.thumbnail ? (
+                                <img
+                                  src={getImageSrc(item.product.thumbnail)}
+                                  alt={item.product?.name || "Product"}
+                                  className="size-full object-cover"
+                                />
+                              ) : (
+                                <PlaceholderImage label={item.product?.name || "Product"} className="size-full" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
                                 <span className="text-gray-primary line-clamp-2 text-sm font-medium">
                                   {item.product?.name || "Product Item"}
                                 </span>
+                                <button
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  disabled={isItemLoading}
+                                  className="text-gray-tertiary hover:text-error-dark cursor-pointer p-1"
+                                >
+                                  {isItemLoading ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                                </button>
                               </div>
-                            </td>
-                            <td className="text-gray-primary px-5 py-4 text-sm">
-                              {formatCurrency(unitPrice)}
-                            </td>
-                            <td className="px-5 py-4">
-                              <QuantityStepper
-                                value={item.quantity}
-                                onChange={(q) => handleUpdateQuantity(item.id, q)}
-                              />
-                            </td>
-                            <td className="text-gray-primary px-5 py-4 text-sm font-bold">
-                              {formatCurrency(itemTotal)}
-                            </td>
-                            <td className="px-5 py-4">
-                              <button
-                                onClick={() => handleRemoveItem(item.id)}
-                                disabled={isItemLoading}
-                                className="text-gray-tertiary hover:text-error-dark cursor-pointer disabled:opacity-50"
-                              >
-                                {isItemLoading ? (
-                                  <Loader2 className="size-4 animate-spin" />
-                                ) : (
-                                  <Trash2 className="size-4" />
-                                )}
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                              <div className="text-gray-primary text-sm mt-1 font-semibold">
+                                {formatCurrency(unitPrice)}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                            <QuantityStepper
+                              value={item.quantity}
+                              onChange={(q) => handleUpdateQuantity(item.id, q)}
+                            />
+                            <div className="text-right">
+                              <span className="text-[10px] uppercase text-gray-secondary block">Total</span>
+                              <span className="text-gray-primary text-sm font-bold">{formatCurrency(itemTotal)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
 
-            <aside className="h-fit space-y-5 rounded-2xl border border-gray-300 p-6">
+            <aside className="h-fit space-y-5 rounded-2xl border border-gray-300 p-6 bg-white">
               <h3 className="text-gray-primary text-lg font-bold">Order Summary</h3>
               <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -218,7 +279,7 @@ export function Cart() {
                   </span>
                 </div>
               </div>
-              <Link to="/checkout">
+              <Link to="/checkout" className="block">
                 <Button fullWidth disabled={cartLoading}>Proceed to Checkout</Button>
               </Link>
             </aside>

@@ -12,11 +12,11 @@
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-tiktok-sans: "TikTok Sans", sans-serif;
 
-  --color-primary-main: #7c3aed;
-  --color-primary-main-dark: #5b21b6;
-  --color-primary-light: #a78bfa;
-  --color-primary-lighter: #ede9fe;
-  --color-success-light: #f5f3ff; 
+  /* Primary Golden-Brown Colors */
+  --color-primary-main: #8e6e45;        /* Base Primary Gold / Warm Raw Silk */
+  --color-primary-main-dark: #634b2d;   /* Deep Bronze Brown for active/hover states */
+  --color-primary-light: #b49368;       /* Medium Warm Gold for accents */
+  --color-primary-lighter: #f5eedf;     /* Soft Champagne Tint for subtle backgrounds */
 
   --color-secondary-main: #3366ff;
   --color-secondary-lighter: #84a9ff;

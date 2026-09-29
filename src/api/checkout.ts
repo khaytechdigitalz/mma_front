@@ -85,4 +85,11 @@ export const checkoutApi = {
     const response = await apiClient.post<CheckoutResponse>("/checkout/place-order", payload);
     return response.data;
   },
+  /**
+   * Submit/Place the final order
+   */
+  async placeOrderGuest(payload: CheckoutPayload) {
+    const response = await apiClient.post<CheckoutResponse>("/checkout/place-order/guest", payload);
+    return response.data;
+  },
 };

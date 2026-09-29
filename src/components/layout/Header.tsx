@@ -357,6 +357,17 @@ export function Header() {
               <Link to="/wishlist" className="hover:text-success-light text-sm text-white transition">
                 My Wishlist
               </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    to="#"
+                    onClick={() => setConfirmingLogout(true)}
+                    className="hover:text-success-light text-sm text-white transition"
+                  >
+                    Logout
+                  </Link>
+                </>
+              ) : null}
             </div>
           </div>
         </Container>

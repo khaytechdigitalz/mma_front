@@ -84,9 +84,12 @@ export function Login() {
       {/* Form side */}
       <div className="flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20">
         <div className="mx-auto w-full max-w-sm">
-          <div className="mb-8">
-            <Logo />
-          </div>
+          <Link to="/" className="">
+            <div className="mb-8">
+              <Logo />
+            </div>
+          </Link>
+         
 
           {requires2fa ? (
             <LoginOtpVerification
@@ -96,14 +99,16 @@ export function Login() {
             />
           ) : (
             <>
+              <center>
               <h1 className="text-gray-primary mb-2 text-2xl sm:text-3xl font-black tracking-tight">
                 Welcome back
               </h1>
               <p className="text-gray-secondary mb-8 text-sm">
                 Sign in to continue to your account.
               </p>
+              </center>
 
-              {/* Social Login Buttons */}
+              {/* Social Login Buttons 
               <div className="mb-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -124,6 +129,7 @@ export function Login() {
                 <span className="text-gray-400 text-xs uppercase tracking-wider font-medium">Or email</span>
                 <span className="h-px flex-1 bg-gray-200" />
               </div>
+              */}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="relative">
@@ -187,7 +193,7 @@ export function Login() {
       {/* Visual side */}
       <div className="relative hidden overflow-hidden bg-slate-950 lg:block">
         <img
-          src="/images/auth/manbag.jpg"
+          src="/images/auth/handcrafted-wooden-decorative-sculpture.jpg"
           alt="Shopping experience cover"
           className="absolute inset-0 size-full object-cover opacity-80"
           onError={(e) => {

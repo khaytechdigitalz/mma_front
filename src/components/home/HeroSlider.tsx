@@ -15,7 +15,7 @@ const slides = [
     "subtitle": "Explore unique art, fashion, and everyday essentials all in one place.",
     "cta": "Shop Now",
     "image": "/images/slider/hero-slide-3.png",
-    "bgimage": "/images/slider/closeup-handsome-black-man-with-long-beard-laughing-having-fun-looking-carefree-standing.jpg",
+    "bgimage": "/images/slider/Gemini_Generated_Image_wx26d2wx26d2wx26.jpeg",
     "href": "/products"
   },
   {
@@ -24,7 +24,7 @@ const slides = [
     "subtitle": "Get up to 40% off your first order from verified vendors near you.",
     "cta": "Explore Deals",
     "image": "/images/slider/sl1.png",
-    "bgimage": "/images/slider/christmas-gift-boxes-various-colors-placed-shopping-cart.jpg",
+    "bgimage": "/images/slider/handcrafted-wooden-decorative-sculpture (1).jpg",
     "href": "/products"
   },
   {
@@ -33,7 +33,7 @@ const slides = [
     "subtitle": "Support independent creators while upgrading your everyday style.",
     "cta": "Explore Collection",
     "image": "/images/slider/hero-slide-2.png",
-    "bgimage": "/images/slider/portrait-man-going-out-shopping-various-consumer-goods.jpg",
+    "bgimage": "/images/slider/Gemini_Generated_Image_f6bdpgf6bdpgf6bd.jpeg",
     "href": "/products"
   },
 
@@ -69,10 +69,10 @@ export function HeroSlider() {
                       <span className="bg-success-light text-gray-800 mb-4 inline-block rounded-full px-3 py-1 text-xs font-medium">
                         {slide.eyebrow}
                       </span>
-                      <h1 className="text-gray-primary mb-4 text-3xl leading-tight font-extrabold md:text-5xl">
+                      <h1 className="text-white mb-4 text-3xl leading-tight font-extrabold md:text-5xl">
                         {slide.title}
                       </h1>
-                      <p className="text-gray-secondary mb-6 max-w-md text-base">
+                      <p className="text-white mb-6 max-w-md text-base">
                         {slide.subtitle}
                       </p>
                       <Link to={slide.href}>

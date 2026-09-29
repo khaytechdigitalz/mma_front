@@ -1,6 +1,6 @@
 // src/pages/PasswordLost.tsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
@@ -62,6 +62,11 @@ export function PasswordLost() {
             {loading ? "Sending code..." : "Send Reset Code"}
           </Button>
         </form>
+         <p className="text-gray-secondary mt-6 text-center text-sm">
+          <Link to="/login" className="text-primary-main font-bold hover:underline">
+            Back To Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

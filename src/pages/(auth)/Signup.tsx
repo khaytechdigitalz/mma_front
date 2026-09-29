@@ -5,7 +5,6 @@ import { User, Mail, Lock, Phone, Eye, EyeOff, Check, X, ShieldCheck, Star } fro
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button"; 
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { cn } from "@/lib/utils";
 import { registerUser } from "@/api/auth";
 
@@ -70,9 +69,11 @@ export function Signup() {
     <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2 bg-white">
       {/* Left Form Section */}
       <div className="flex flex-col justify-center px-6 py-12 sm:px-16 lg:px-20">
-        <div className="mb-6">
-          <Logo />
-        </div>
+       <Link to="/" className="">
+            <div className="mb-6">
+              <Logo />
+            </div>
+        </Link>
         <h1 className="text-gray-primary mb-2 text-2xl sm:text-3xl font-black tracking-tight">Create your account</h1>
         <p className="text-gray-secondary mb-8 text-sm">
           Join thousands of shoppers getting redefined shopping experiences.
@@ -208,7 +209,7 @@ export function Signup() {
       {/* Right Visual Side */}
       <div className="relative hidden overflow-hidden bg-slate-950 lg:block">
         <img
-          src="/images/auth/closeup-shot-beautiful-young-african-women-with-shopping-bags.jpg"
+          src="/images/auth/handcrafted-wooden-decorative-woman-sculpture.jpg"
           alt="Shopping experience cover"
           className="absolute inset-0 size-full object-cover opacity-80"
           onError={(e) => {

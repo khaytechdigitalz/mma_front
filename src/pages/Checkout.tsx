@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CreditCard, Loader2, UserCheck, Edit3 } from "lucide-react";
+import { CreditCard, Loader2, UserCheck, Edit3, Truck, CheckCircle2 } from "lucide-react";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +8,16 @@ import { useStore } from "@/store/StoreContext";
 import { formatCurrency, cn } from "@/lib/utils";
 import { checkoutApi } from "@/api/checkout"; 
 import { EmptyCartScreen } from "@/pages/EmptyCartScreen";
+
+interface ShippingOption {
+  carrier_logo?: string;
+  carrier_name: string;
+  carrier_rate_description?: string;
+  amount: number;
+  currency?: string;
+  delivery_time?: string;
+  shipping_options?: [];
+}
 
 export function Checkout() {
   const { clearCart } = useStore();
@@ -29,11 +39,13 @@ export function Checkout() {
   });
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [subtotal, setSubtotal] = useState(0);
-  const [shippingFee, setShippingFee] = useState(0);
-  const [total, setTotal] = useState(0);
   const [defaultAddress, setDefaultAddress] = useState<any>(null);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [paymentGateways, setPaymentGateways] = useState<any[]>([]);
+
+  // Shipping Options State
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [selectedShippingOption, setSelectedShippingOption] = useState<ShippingOption | null>(null);
 
   // Form selections & Guest manual address input
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
@@ -63,14 +75,21 @@ export function Checkout() {
         const res = await checkoutApi.getSummary();
         
         if (res?.status && res?.data) {
-          const data = res.data;
+          const data = res.data as typeof res.data & { shipping_options?: ShippingOption[] };
           setCartItems(data.cart_items || []);
           setSubtotal(data.subtotal || 0);
-          setShippingFee(data.shipping_fee || 0);
-          setTotal(data.total || 0);
           setDefaultAddress(data.default_address || null);
           setAddresses(data.addresses || []);
           setPaymentGateways(data.payment_gateways || []);
+
+          // Set shipping options
+          const options: ShippingOption[] = data.shipping_options || [];
+          setShippingOptions(options);
+
+          // Auto-select the first courier option if available
+          if (options.length > 0) {
+            setSelectedShippingOption(options[0]);
+          }
 
           if (data.user && data.user.email) {
             setIsAuthenticated(true);
@@ -97,10 +116,19 @@ export function Checkout() {
     fetchCheckoutSummary();
   }, []);
 
+  // Compute active shipping fee and total based on selected shipping option
+  const activeShippingFee = selectedShippingOption ? selectedShippingOption.amount : 0;
+  const grandTotal = subtotal + activeShippingFee;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (selectedGatewayId === null) {
       showToast("Please select a payment method.");
+      return;
+    }
+
+    if (shippingOptions.length > 0 && !selectedShippingOption) {
+      showToast("Please select a delivery courier option.");
       return;
     }
 
@@ -116,7 +144,12 @@ export function Checkout() {
         email: userData.email,
         phone: userData.phone || "",
         payment_gateway_id: selectedGatewayId,
-        shipping_fee: shippingFee,
+        shipping_fee: activeShippingFee,
+        selected_shipping_option: selectedShippingOption ? {
+          carrier_name: selectedShippingOption.carrier_name,
+          carrier_rate_description: selectedShippingOption.carrier_rate_description,
+          amount: selectedShippingOption.amount,
+        } : null,
       };
 
       // Call guest checkout API if guest mode or not logged in
@@ -356,7 +389,7 @@ export function Checkout() {
                           <p className="text-gray-primary text-sm font-semibold">
                             {defaultAddress.address}, {defaultAddress.city}, {defaultAddress.state}, {defaultAddress.country}
                           </p>
-                          <p className="text-gray-400 text-xs mt-0.5">ZIP Code: {defaultAddress.zip || "N/A"}</p>
+                          <p className="text-gray-400 text-xs mt-0.5">ZIP Code: {defaultAddress.postal_code || defaultAddress.zip || "N/A"}</p>
                         </div>
                         <span className="bg-primary-lighter/50 text-primary-main rounded-full px-3 py-1 text-xs font-bold">
                           Default Address
@@ -367,6 +400,76 @@ export function Checkout() {
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* Delivery Courier Options */}
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
+                <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
+                  <Truck className="size-5 text-primary-main" />
+                  <div>
+                    <h3 className="text-gray-primary text-lg font-bold">Delivery Courier</h3>
+                    <p className="text-gray-500 text-xs mt-0.5">Select your preferred shipping carrier for live fulfillment</p>
+                  </div>
+                </div>
+
+                {shippingOptions.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-gray-500 text-sm">
+                    No active shipping rates found for this destination address.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {shippingOptions.map((option, index) => {
+                      const isSelected = selectedShippingOption?.carrier_name === option.carrier_name &&
+                        selectedShippingOption?.amount === option.amount;
+
+                      return (
+                        <div
+                          key={`${option.carrier_name}-${index}`}
+                          onClick={() => setSelectedShippingOption(option)}
+                          className={cn(
+                            "relative flex items-center justify-between rounded-xl border p-4 cursor-pointer transition-all",
+                            isSelected
+                              ? "border-primary-main bg-primary-lighter/10 ring-2 ring-primary-main/20 shadow-xs"
+                              : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="size-12 rounded-xl border border-gray-100 bg-gray-50 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                              {option.carrier_logo ? (
+                                <img
+                                  src={option.carrier_logo}
+                                  alt={option.carrier_name}
+                                  className="size-full object-contain"
+                                  onError={(e) => {
+                                    // Image fallback if URL fails to load
+                                    (e.target as HTMLElement).style.display = 'none';
+                                  }}
+                                />
+                              ) : (
+                                <Truck className="size-6 text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <h4 className="text-gray-primary font-bold text-sm">{option.carrier_name}</h4>
+                                {isSelected && <CheckCircle2 className="size-4 text-primary-main" />}
+                              </div>
+                              <p className="text-gray-500 text-xs">{option.carrier_rate_description || "Standard Delivery"}</p>
+                              {option.delivery_time && (
+                                <p className="text-emerald-600 font-medium text-[11px] mt-0.5">{option.delivery_time}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right pl-2">
+                            <span className="text-gray-primary font-black text-sm">
+                              {formatCurrency(Number(option.amount))}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Payment Methods */}
@@ -420,15 +523,24 @@ export function Checkout() {
                   <span className="text-gray-secondary">Subtotal</span>
                   <span className="text-gray-primary font-bold">{formatCurrency(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-secondary">Shipping</span>
                   <span className="text-gray-primary font-bold">
-                    {shippingFee === 0 ? <span className="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 px-2 py-0.5 rounded">Free</span> : formatCurrency(shippingFee)}
+                    {activeShippingFee === 0 ? (
+                      <span className="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 px-2 py-0.5 rounded">Free</span>
+                    ) : (
+                      formatCurrency(activeShippingFee)
+                    )}
                   </span>
                 </div>
+                {selectedShippingOption && (
+                  <p className="text-[11px] text-gray-400 text-right -mt-2">
+                    via {selectedShippingOption.carrier_name}
+                  </p>
+                )}
                 <div className="flex justify-between border-t border-gray-100 pt-4 text-base">
                   <span className="text-gray-primary font-black">Total Amount</span>
-                  <span className="text-primary-main text-lg font-black">{formatCurrency(total)}</span>
+                  <span className="text-primary-main text-lg font-black">{formatCurrency(grandTotal)}</span>
                 </div>
               </div>
 

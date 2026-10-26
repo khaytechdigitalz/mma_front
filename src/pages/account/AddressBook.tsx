@@ -1,7 +1,9 @@
 // src/pages/account/AddressBook.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapPin, Loader2, Plus, Pencil, Trash2, Star, X, Building2 } from "lucide-react";
 import { toast } from "sonner";
+import { Country, State, City } from "country-state-city";
+import Select from "react-select";
 import { Container, Section } from "@/components/ui/Container";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Button } from "@/components/ui/Button";
@@ -26,12 +28,45 @@ const emptyForm: LocalAddressInput = {
   city: "",
   state: "",
   postal_code: "",
-  country: "",
+  country: "NG", // Default to Nigeria
   is_default: false,
 };
 
 const inputClass =
   "border-gray-tertiary/32 h-11 w-full rounded-lg border px-4 text-sm focus:outline-0 focus:ring-1 focus:ring-primary-main bg-white text-gray-primary";
+
+// Custom react-select styles matching the theme
+const reactSelectStyles = {
+  control: (base: any, state: any) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "0.5rem",
+    borderColor: state.isFocused ? "#0d9488" : "rgba(209, 213, 219, 0.6)",
+    boxShadow: "none",
+    "&:hover": {
+      borderColor: "#0d9488",
+    },
+    backgroundColor: "#ffffff",
+  }),
+  menu: (base: any) => ({
+    ...base,
+    borderRadius: "0.5rem",
+    zIndex: 60,
+    overflow: "hidden",
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "#0d9488"
+      : state.isFocused
+      ? "#f0fdfa"
+      : "#ffffff",
+    color: state.isSelected ? "#ffffff" : "#374151",
+    cursor: "pointer",
+    fontSize: "0.875rem",
+  }),
+};
 
 export function AddressBook() {
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
@@ -43,6 +78,56 @@ export function AddressBook() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [settingDefaultId, setSettingDefaultId] = useState<number | null>(null);
+
+  // Raw location datasets for dropdowns
+  const [countries, setCountries] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+
+  // Load countries on mount
+  useEffect(() => {
+    setCountries(Country.getAllCountries());
+  }, []);
+
+  // Sync state list when selected country changes
+  useEffect(() => {
+    if (form.country) {
+      const countryStates = State.getStatesOfCountry(form.country);
+      setStates(countryStates);
+    } else {
+      setStates([]);
+    }
+  }, [form.country]);
+
+  // Sync city list when selected country or state changes
+  useEffect(() => {
+    if (form.country && form.state) {
+      const stateObj = states.find(
+        (s) => s.name === form.state || s.isoCode === form.state
+      );
+      const stateCode = stateObj ? stateObj.isoCode : form.state;
+      const stateCities = City.getCitiesOfState(form.country, stateCode);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+  }, [form.country, form.state, states]);
+
+  // Select options memoization
+  const countryOptions = useMemo(
+    () => countries.map((c) => ({ value: c.isoCode, label: c.name })),
+    [countries]
+  );
+
+  const stateOptions = useMemo(
+    () => states.map((s) => ({ value: s.name, label: s.name })),
+    [states]
+  );
+
+  const cityOptions = useMemo(
+    () => cities.map((ct) => ({ value: ct.name, label: ct.name })),
+    [cities]
+  );
 
   const loadAddresses = async () => {
     setLoading(true);
@@ -70,13 +155,29 @@ export function AddressBook() {
 
   const openEditForm = (address: CustomerAddress) => {
     setEditingId(address.id);
+    const selectedCountry = address.country || "NG";
+    const selectedState = address.state || "";
+
+    // Preload dependent state and city options for editing
+    if (selectedCountry) {
+      const countryStates = State.getStatesOfCountry(selectedCountry);
+      setStates(countryStates);
+      if (selectedState) {
+        const stateObj = countryStates.find(
+          (s) => s.name === selectedState || s.isoCode === selectedState
+        );
+        const stateCode = stateObj ? stateObj.isoCode : selectedState;
+        setCities(City.getCitiesOfState(selectedCountry, stateCode));
+      }
+    }
+
     setForm({
       label: address.label || "", 
       address: address.address || "",
       city: address.city || "",
-      state: address.state || "",
+      state: selectedState,
       postal_code: address.postal_code || (address as any).postal_code || "",
-      country: address.country || "",
+      country: selectedCountry,
       is_default: Boolean(address.is_default),
     });
     setFormOpen(true);
@@ -88,10 +189,10 @@ export function AddressBook() {
     try {
       if (editingId) {
         await updateAddress(editingId, form);
-        toast.success("Address updated");
+        toast.success("Address updated successfully");
       } else {
         await createAddress(form);
-        toast.success("Address added");
+        toast.success("Address added successfully");
       }
       setFormOpen(false);
       await loadAddresses();
@@ -321,49 +422,84 @@ export function AddressBook() {
                 />
               </div>
 
+              {/* Country Select */}
+              <div>
+                <label className="block text-xs font-medium text-gray-secondary mb-1.5">Country</label>
+                <Select
+                  options={countryOptions}
+                  value={countryOptions.find((opt) => opt.value === form.country) || null}
+                  onChange={(selected) =>
+                    setForm((f) => ({
+                      ...f,
+                      country: selected ? selected.value : "",
+                      state: "",
+                      city: "",
+                    }))
+                  }
+                  placeholder="Search country..."
+                  isSearchable
+                  styles={reactSelectStyles}
+                />
+              </div>
+
+              {/* State and City Options */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">City</label>
-                  <input
-                    required
-                    placeholder="City"
-                    value={form.city}
-                    onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                    className={inputClass}
+                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">State / Province</label>
+                  <Select
+                    options={stateOptions}
+                    value={stateOptions.find((opt) => opt.value === form.state) || null}
+                    onChange={(selected) =>
+                      setForm((f) => ({
+                        ...f,
+                        state: selected ? selected.value : "",
+                        city: "",
+                      }))
+                    }
+                    placeholder="Search state..."
+                    isDisabled={!form.country}
+                    isSearchable
+                    styles={reactSelectStyles}
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">State / Province</label>
-                  <input
-                    required
-                    placeholder="State"
-                    value={form.state}
-                    onChange={(e) => setForm((f) => ({ ...f, state: e.target.value }))}
-                    className={inputClass}
-                  />
+                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">City</label>
+                  {cityOptions.length > 0 ? (
+                    <Select
+                      options={cityOptions}
+                      value={cityOptions.find((opt) => opt.value === form.city) || null}
+                      onChange={(selected) =>
+                        setForm((f) => ({
+                          ...f,
+                          city: selected ? selected.value : "",
+                        }))
+                      }
+                      placeholder="Search city..."
+                      isDisabled={!form.state}
+                      isSearchable
+                      styles={reactSelectStyles}
+                    />
+                  ) : (
+                    <input
+                      required
+                      placeholder="Enter city"
+                      value={form.city}
+                      onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+                      className={inputClass}
+                    />
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">Postal Code (Optional)</label>
-                  <input
-                    placeholder="Postal / ZIP code"
-                    value={form.postal_code}
-                    onChange={(e) => setForm((f) => ({ ...f, postal_code: e.target.value }))}
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-secondary mb-1.5">Country</label>
-                  <input
-                    required
-                    placeholder="Country"
-                    value={form.country}
-                    onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
-                    className={inputClass}
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-secondary mb-1.5">Postal Code (Optional)</label>
+                <input
+                  placeholder="Postal / ZIP code"
+                  value={form.postal_code}
+                  onChange={(e) => setForm((f) => ({ ...f, postal_code: e.target.value }))}
+                  className={inputClass}
+                />
               </div>
 
               <div className="flex items-center gap-2 pt-1 pb-2">

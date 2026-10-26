@@ -18,7 +18,7 @@ export const apiClient = axios.create({
     'Accept': 'application/json',
     'X-Guest-Token': guestToken,
   },
-  timeout: 15000,
+  timeout: 2000000,
 });
 
 // Request Interceptor: Attach Auth Bearer Token

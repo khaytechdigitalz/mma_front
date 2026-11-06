@@ -22,6 +22,7 @@ export interface CheckoutSummary {
     };
   }>;
   subtotal: number;
+  parcel_id: string;
   shipping_fee: number;
   total: number;
   default_address: {

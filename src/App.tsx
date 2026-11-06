@@ -14,6 +14,7 @@ import { BlogList } from "@/pages/BlogList";
 import { BlogDetails } from "@/pages/BlogDetails";
 import { Faq } from "@/pages/Faq";
 import { Contact } from "@/pages/Contact";
+import { About } from "@/pages/About";
 import { Wishlist } from "@/pages/Wishlist";
 import { CompareList } from "@/pages/CompareList";
 import { OrderSuccess } from "@/pages/OrderSuccess";
@@ -55,6 +56,7 @@ function App() {
             <Route path="blog-list" element={<BlogList />} />
             <Route path="blog-details" element={<BlogDetails />} />
             <Route path="faq" element={<Faq />} />
+            <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
             <Route path="compare-list" element={<CompareList />} />

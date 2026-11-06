@@ -45,7 +45,7 @@ export function TermsAndConditions() {
                 const body = lines.slice(1).join(" ").trim();
                 parsedSections.push({ title, body });
               } else if (lines.length === 1 && lines[0].trim()) {
-                parsedSections.push({ title: "Details", body: lines[0].trim() });
+                parsedSections.push({ title: "", body: lines[0].trim() });
               }
             });
 
@@ -68,9 +68,7 @@ export function TermsAndConditions() {
       <Section>
         <Container>
           <div className="mx-auto max-w-3xl space-y-8">
-            <p className="text-gray-secondary text-sm">
-              Last updated: {loading ? <span className="inline-block h-3 w-24 bg-gray-200 animate-pulse rounded" /> : updatedAt}
-            </p>
+           
 
             {loading ? (
               <div className="space-y-8 animate-pulse">

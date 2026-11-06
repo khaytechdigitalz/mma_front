@@ -50,6 +50,7 @@ export function Checkout() {
   // Form selections & Guest manual address input
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const [selectedGatewayId, setSelectedGatewayId] = useState<number | null>(null);
+  const [parcelId, setparcelId] = useState<string | null>(null);
   const [guestAddress, setGuestAddress] = useState({
     address: "",
     city: "",
@@ -101,6 +102,11 @@ export function Checkout() {
           if (data.default_address?.id) {
             setSelectedAddressId(data.default_address.id);
           }
+
+
+          if (data.parcel_id) {
+            setparcelId(data.parcel_id);
+          }
           if (data.payment_gateways?.length > 0) {
             setSelectedGatewayId(data.payment_gateways[0].id);
           }
@@ -143,6 +149,7 @@ export function Checkout() {
         name: userData.name,
         email: userData.email,
         phone: userData.phone || "",
+        parcel_id: parcelId || "",
         payment_gateway_id: selectedGatewayId,
         shipping_fee: activeShippingFee,
         selected_shipping_option: selectedShippingOption ? {

@@ -12,6 +12,7 @@ export interface OrderItem {
   order_id: number;
   product_id: number;
   unit_price: string;
+  delivery_status: string;
   name: string;
   thumbnail: string | null;
   quantity: number;
@@ -22,6 +23,15 @@ export interface OrderItem {
     name: string;
     thumbnail: string;
   };
+}
+
+
+export interface SubOrder {
+  id: number;
+  sub_order_no: string;
+  terminal_shipment_id: string;
+  terminal_parcel_id: string | null; 
+  order_status: string;
 }
 
 export interface OrderSummary {
@@ -58,6 +68,7 @@ export interface OrderDetail extends OrderSummary {
   subtotal: number;
   shipping_cost: number;
   discount: number;
+  discount_amount: number;
   tax: number;
   shipping_address: string;
   shipping_city: string;
@@ -66,6 +77,7 @@ export interface OrderDetail extends OrderSummary {
   shipping_country: string;
   payment_method: string;
   items: OrderItem[];
+  suborder: SubOrder[];
 }
 
 export interface TrackingStep {

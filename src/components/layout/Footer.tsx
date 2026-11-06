@@ -17,7 +17,7 @@ const shopLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-const categoryLinks = ["Music", "Portery", "Home-Decor", "Art & Painting"];
+const categoryLinks = [{ label: "Terms & Condition", href: "terms.pdf" }, { label: "Refund & Return Policy", href: "refund.pdf" }, { label: "Acceptable Use Policy", href: "policy.pdf" }];
 
 export function Footer() {
   return (
@@ -100,12 +100,12 @@ export function Footer() {
             </div>
 
             <div className="md:col-span-3">
-              <h4 className="text-gray-primary mb-5 text-lg font-medium">Quick Links</h4>
+              <h4 className="text-gray-primary mb-5 text-lg font-medium">Policy Links</h4>
               <ul className="text-gray-secondary space-y-4 text-sm">
                 {categoryLinks.map((l) => (
-                  <li key={l}>
-                    <Link to="/products" className="hover:text-primary-main transition hover:underline">
-                      {l}
+                  <li key={l.label}>
+                    <Link to={l.href} className="hover:text-primary-main transition hover:underline" target="_blank">
+                      {l.label}
                     </Link>
                   </li>
                 ))}
@@ -116,14 +116,13 @@ export function Footer() {
               <h4 className="text-gray-primary mb-5 text-lg font-medium">Customer Services</h4>
               <ul className="space-y-4">
                 <li className="text-gray-secondary flex items-center gap-2 text-sm">
-                  <Phone className="size-4 shrink-0" /> +1 (555) 666-77-88
+                  <Phone className="size-4 shrink-0" /> +234 90 55585420
                 </li>
                 <li className="text-gray-secondary flex items-center gap-2 text-sm">
-                  <Mail className="size-4 shrink-0" /> help@company.com
+                  <Mail className="size-4 shrink-0" /> support@marketmyartonline.com
                 </li>
                 <li className="text-gray-secondary flex items-center gap-2 text-sm">
-                  <MapPin className="size-4 shrink-0" /> 2972 Westheimer Rd. Santa
-                  Ana, Illinois 85486
+                  <MapPin className="size-4 shrink-0" />  1 Iwebo Lane, Ogbe quarters, King square,Benin city, NG.
                 </li>
               </ul>
             </div>

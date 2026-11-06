@@ -258,6 +258,7 @@ export function Header() {
           .filter((c) => c.status === "active")
           .map((c) => ({ label: c.name, href: `/products?category_id=${c.id}` })),
       },
+      /*
       {
         label: "Pages",
         href: "/faq",
@@ -267,9 +268,10 @@ export function Header() {
           { label: "Terms & Conditions", href: "/term-and-conditions" },
         ],
       },
+      */
       {
-        label: "Blog",
-        href: "/blog-list",
+        label: "About",
+        href: "/about",
       },
       { label: "Contact", href: "/contact" },
     ],
@@ -287,10 +289,10 @@ export function Header() {
                 <Phone className="size-4" />
                 <span>Need Support? Call Us</span>
                 <a
-                  href="tel:+4805550103"
+                  href="tel:+234 90 55585420"
                   className="bg-success-light inline-flex h-5 items-center justify-center rounded-full px-2 text-xs font-normal text-gray-800"
                 >
-                  (480) 555-0103
+                  +234 90 55585420
                 </a>
               </p>
               <div className="divide-primary-main-dark hidden divide-x lg:flex">
@@ -308,7 +310,7 @@ export function Header() {
                 >
                   {(close) => (
                     <div className="w-32 py-1">
-                      {["English", "Español", "Français", "Deutsch"].map((l) => (
+                      {["English"].map((l) => (
                         <button
                           key={l}
                           onClick={close}

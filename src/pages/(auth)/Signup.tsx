@@ -199,6 +199,13 @@ export function Signup() {
         </form>
 
         <p className="text-gray-secondary mt-6 text-center text-sm">
+          Like to become a seller?{" "}
+          <Link to="https://seller.marketmyartonline.com/signup" target="_blank" className="text-primary-main font-bold hover:underline">
+            Sign up as a seller
+          </Link>
+        </p>
+
+        <p className="text-gray-secondary mt-6 text-center text-sm">
           Already have an account?{" "}
           <Link to="/login" className="text-primary-main font-bold hover:underline">
             Sign in

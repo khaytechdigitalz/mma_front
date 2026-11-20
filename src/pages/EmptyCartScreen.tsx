@@ -15,8 +15,8 @@ export function EmptyCartScreen() {
           <p className="text-gray-secondary">
             Looks like you haven't added anything to your cart yet or you are currently not logged in to you account.
           </p>
-          <Link to="/products">
-            <Button>Start Shopping</Button>
+          <Link to="/login">
+            <Button>Login To Account</Button>
           </Link>
         </div>
       </Container>

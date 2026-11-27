@@ -160,10 +160,10 @@ export function MobileMenu() {
             </button>
           </Link>
           <div className="text-gray-secondary flex items-center gap-2 text-sm">
-            <Phone className="size-4" /> (480) 555-0103
+            <Phone className="size-4" />+234 90 55585420
           </div>
           <div className="text-gray-secondary mt-2 flex items-center gap-2 text-sm">
-            <Mail className="size-4" /> help@company.com
+            <Mail className="size-4" /> support@marketmyartonline.com
           </div>
         </div>
 
